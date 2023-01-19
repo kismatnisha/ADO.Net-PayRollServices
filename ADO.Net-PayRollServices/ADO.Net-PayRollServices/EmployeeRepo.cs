@@ -11,6 +11,62 @@ namespace ADO.Net_PayRollServices
     {
         public static string connectionstring = @"Data Source=DESKTOP-9GHNI24\SQLEXPRESS;Initial Catalog=payroll_service;Integrated Security=True";
         SqlConnection connection = new SqlConnection(connectionstring);
+       
+            public void GetAllEmployee()
+        {
+            try
+            {
+                EmployeeModel employeemodel = new EmployeeModel();
+                using (this.connection)
+                {
+                    //string query = @"select EmployeeID,EmployeeName,PhoneNo,Address,Department,Gender,BasicPay,Deduction,Taxable,Tax,NetPay,StartDate,City,Country from employee_payroll";
+                    string query = @"select * from employee_payroll";
+
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    this.connection.Open();
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            employeemodel.EmployeeID = dr.GetInt32(0);
+                            employeemodel.EmployeeName = dr.GetString(1);
+                            employeemodel.Phoneno = dr.GetString(2);
+                            employeemodel.Address = dr.GetString(3);
+                            employeemodel.Department = dr.GetString(4);
+                            employeemodel.Gender = Convert.ToChar(dr.GetString(5));
+                            employeemodel.BasicPay = dr.GetDouble(6);
+                            employeemodel.Deduction = dr.GetDouble(7);
+                            employeemodel.TaxablePay = dr.GetDouble(8);
+                            employeemodel.Tax = dr.GetDouble(9);
+                            employeemodel.NetPay = dr.GetDouble(10);
+                            employeemodel.StartDate = dr.GetDateTime(11);
+                            employeemodel.City = dr.GetString(12);
+                            employeemodel.Country = dr.GetString(13);
+
+                            Console.WriteLine("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}", employeemodel.EmployeeID, employeemodel.EmployeeName, employeemodel.Phoneno, employeemodel.Address, employeemodel.Department, employeemodel.Gender, employeemodel.BasicPay
+                                , employeemodel.Deduction, employeemodel.TaxablePay, employeemodel.Tax, employeemodel.NetPay, employeemodel.StartDate, employeemodel.City, employeemodel.Country);
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("no data found");
+                    }
+                    dr.Close();
+                    this.connection.Close();
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                this.connection.Close();
+            }
+        }
         public bool AddEmployee(EmployeeModel model)
         {
             try
